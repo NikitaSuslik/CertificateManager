@@ -1,0 +1,106 @@
+﻿<Window x:Class="CertificateManager.Windows.CreateServerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CertificateManager.Windows"
+        xmlns:model="clr-namespace:CertificateManager.WindowsModels"
+        xmlns:m="clr-namespace:CertificateManager.Models"
+        mc:Ignorable="d"
+        Title="Certificate" Height="auto" Width="517" ResizeMode="NoResize">
+
+    <Window.DataContext>
+        <model:CreateServerWindowModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="{Binding GroupName}" Grid.Column="0" DataContext="{Binding ServerModel}">
+            <StackPanel>
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Name" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding Name}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="IP" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding IP}" IsEnabled="{Binding CanEdit}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Port" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding Port}" IsEnabled="{Binding CanEdit}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Protocol" Margin="2"/>
+                    <ComboBox Margin="2" Height="20" SelectedIndex="{Binding Proto}" IsEnabled="{Binding CanEdit}">
+                        <ComboBoxItem Content="TCP"/>
+                        <ComboBoxItem Content="UDP"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Mode" Margin="2"/>
+                    <ComboBox Margin="2" Height="20" SelectedIndex="{Binding Mode}" IsEnabled="{Binding CanEdit}">
+                        <ComboBoxItem Content="TUN"/>
+                        <ComboBoxItem Content="TAP"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Parameters" Margin="2"/>
+                    <TextBox Margin="2" Height="80" Text="{Binding Params}" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Certificate" Grid.Column="1" DataContext="{Binding CertificateModel}">
+            <StackPanel>
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Name" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding Name}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Common Name" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding CommonName}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Country" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding Country}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Organisation" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding Organisation}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,2">
+                    <Label Content="Organisation Unit" Margin="2"/>
+                    <TextBox Margin="2" Height="20" Text="{Binding OrganisationUnit}"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <Label Content="Key Size" Margin="2"/>
+                    <ComboBox Margin="2" Height="20" ItemsSource="{Binding KeySize}" SelectedIndex="{Binding SelectedKeySizeIndex}" IsEnabled="{Binding CanEdit}"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        
+        <Button Content="OK" Height="20" Width="100" Command="{Binding OkButton}" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+    </Grid>
+    
+    
+</Window>

@@ -1,11 +1,17 @@
-﻿<Window x:Class="CertificateCreator.MainWindow"
+﻿<Window x:Class="CertificateManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CertificateCreator"
+        xmlns:local="clr-namespace:CertificateManager.Windows"
+        xmlns:model="clr-namespace:CertificateManager.WindowsModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Main Window" Height="450" Width="800">
+    
+    <Window.DataContext>
+        <model:MainWindowModel/>
+    </Window.DataContext>
+    
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -14,30 +20,107 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="20*"/>
-            <RowDefinition Height="80*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-
-        <Menu Grid.ColumnSpan="3">
-            <MenuItem Header="Menu" Margin="3">
-                <MenuItem Header="Settings"/>
-            </MenuItem>
-        </Menu>
-
-        <GroupBox Header="CA Certificate" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+        
+        <StackPanel Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60*"/>
-                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="90*"/>
                 </Grid.ColumnDefinitions>
-                
-                <ComboBox Height="25" Margin="10">
-                    
+                <Label Content="Servers" VerticalAlignment="Center"/>
+                <ComboBox Height="25" Margin="10" SelectedValue="{Binding SelectedServer}" ItemsSource="{Binding Servers}" Grid.Column="1">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
-
-                <Button Content="Create" Grid.Column="1" Height="25" Width="110" Click="CreateClick"/>
             </Grid>
+            
+            <GroupBox Header="Certificate Info">
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedServer.certificate.Name}" Grid.Column="0"/>
+                        <TextBlock Text="{Binding StringFormat=Common\ Name: {0}, Path=SelectedServer.certificate.CommonName}" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding StringFormat=Country: {0}, Path=SelectedServer.certificate.Country}" Grid.Column="0"/>
+                        <TextBlock Text="{Binding StringFormat=Key\ Size: {0}, Path=SelectedServer.certificate.KeySize}" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding StringFormat=Organisation: {0}, Path=SelectedServer.certificate.Organisation}" Grid.Column="0"/>
+                        <TextBlock Text="{Binding StringFormat=Organisation\ Unit: {0}, Path=SelectedServer.certificate.OrganisationUnit}" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+
+        <GroupBox Header="Servers Tools" Grid.Row="0" Grid.Column="2">
+            <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                <Button Content="Create Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateServer}"/>
+                <Button Content="Delete Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteServer}"/>
+            </StackPanel>
+        </GroupBox>
+        
+        <GroupBox Header="Users Tools" Grid.Row="1" Grid.Column="2">
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <Button Content="Create User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateUser}"/>
+                <Button Content="Delete User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteUser}"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Users" Grid.Row="1" Grid.RowSpan="2">
+            <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Login}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <GroupBox Header="User Info" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+            <StackPanel>
+                <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedUser.Login}" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Password: {0}, Path=SelectedUser.Password}" Margin="5"/>
+                <TextBlock Text="Certificate" HorizontalAlignment="Center" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedUser.certificate.Name}" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Common\ Name: {0}, Path=SelectedUser.certificate.CommonName}" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Country: {0}, Path=SelectedUser.certificate.Country}" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Organisation: {0}, Path=SelectedUser.certificate.Organisation}" Margin="5"/>
+                <TextBlock Text="{Binding StringFormat=Organisation\ Unit: {0}, Path=SelectedUser.certificate.OrganisationUnit}" Margin="5"/>
+                <TextBlock Text="Params:" Margin="5"/>
+                <TextBlock Text="{Binding SelectedUser.Parameters}" Margin="5" Height="auto"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Export Tools" Grid.Row="2" Grid.Column="2">
+            <StackPanel>
+                <ComboBox Margin="5" SelectedIndex="0">
+                    <ComboBoxItem Content="Certificates in config"/>
+                    <ComboBoxItem Content="Certificates out config"/>
+                    <ComboBoxItem Content="Only certificates"/>
+                    <ComboBoxItem Content="Only config"/>
+                </ComboBox>
+                <Button Content="Export" Margin="5"/>
+            </StackPanel>
         </GroupBox>
     </Grid>
 </Window>

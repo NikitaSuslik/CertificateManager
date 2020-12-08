@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
+using CertificateManager.WindowsModels;
+
 namespace CertificateManager
 {
     /// <summary>
@@ -13,5 +15,10 @@ namespace CertificateManager
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            WindowsManager.Shared.ShowWindow(new MainWindow());
+        }
+
     }
 }
