@@ -40,10 +40,31 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </Grid>
+
+            <GroupBox Header="Server info">
+                <StackPanel Margin="5">
+                    <Grid Margin="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding StringFormat=IP: {0}, Path=SelectedServer.IP}"/>
+                        <TextBlock Text="{Binding StringFormat=Port: {0}, Path=SelectedServer.Port}" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding StringFormat=Proto: {0}, Path=SelectedServer.SProto}"/>
+                        <TextBlock Text="{Binding StringFormat=Mode: {0}, Path=SelectedServer.SMode}" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
             
             <GroupBox Header="Certificate Info">
                 <StackPanel Margin="5">
-                    <Grid>
+                    <Grid Margin="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
@@ -119,7 +140,7 @@
                     <ComboBoxItem Content="Only certificates"/>
                     <ComboBoxItem Content="Only config"/>
                 </ComboBox>
-                <Button Content="Export" Margin="5"/>
+                <Button Content="Export" Margin="5" Command="{Binding ExportButton}"/>
             </StackPanel>
         </GroupBox>
     </Grid>

@@ -50,5 +50,21 @@ namespace CertificateManager.Models
         {
             get; set;
         }
+
+        public string SProto
+        {
+            get
+            {
+                return Proto == 0 ? "tcp" : "udp";
+            }
+        }
+
+        public string SMode
+        {
+            get
+            {
+                return Mode == 0 ? "tun" : "tap";
+            }
+        }
     }
 }

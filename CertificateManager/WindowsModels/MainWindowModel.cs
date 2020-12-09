@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
+using Ookii.Dialogs.Wpf;
 
 using CertificateManager.Windows;
 using CertificateManager.Models;
@@ -150,7 +149,77 @@ namespace CertificateManager.WindowsModels
             {
                 return _ExportButton ?? (_ExportButton = new CommandRelise(obj =>
                 {
-                    string PathExport = 
+                    VistaFolderBrowserDialog folderBrowserDialog = new VistaFolderBrowserDialog();
+                    folderBrowserDialog.UseDescriptionForTitle = true;
+                    folderBrowserDialog.Description = "Select export folder";
+                    folderBrowserDialog.RootFolder = Environment.SpecialFolder.DesktopDirectory;
+                    folderBrowserDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\";
+
+                    if (folderBrowserDialog.ShowDialog().GetValueOrDefault())
+                    {
+                        string ExportFolderPath = folderBrowserDialog.SelectedPath;
+                        StringBuilder ConfigData = new StringBuilder();
+                        StringBuilder CAData = new StringBuilder();
+                        StringBuilder UserCertData = new StringBuilder();
+                        StringBuilder UserKeyData = new StringBuilder();
+
+                        try
+                        {
+                            switch (SelectedIndexExport)
+                            {
+                                case 0:
+                                    string[] CA = SQLManager.Shared.GetCA(SelectedServer.certificate);
+                                    string[] UserCert = SQLManager.Shared.GetUserCert(SelectedUser.certificate);
+
+                                    CAData.AppendLine("-----BEGIN CERTIFICATE-----");
+                                    CAData.AppendLine(CA[0]);
+                                    CAData.AppendLine("-----END CERTIFICATE-----");
+
+                                    UserCertData.AppendLine("-----BEGIN CERTIFICATE-----");
+                                    UserCertData.AppendLine(UserCert[0]);
+                                    UserCertData.AppendLine("-----END CERTIFICATE-----");
+
+                                    UserKeyData.AppendLine("-----BEGIN PRIVATE KEY-----");
+                                    UserKeyData.AppendLine(UserCert[1]);
+                                    UserKeyData.AppendLine("-----END PRIVATE KEY-----");
+
+                                    ConfigData.AppendLine("client");
+                                    ConfigData.AppendLine($"dev {SelectedServer.SMode}");
+                                    ConfigData.AppendLine($"proto {SelectedServer.SProto}");
+                                    ConfigData.AppendLine($"remote {SelectedServer.IP} {SelectedServer.Port}");
+                                    ConfigData.AppendLine("resolv-retry infinite");
+                                    ConfigData.AppendLine("remote-cert-tls server");
+                                    ConfigData.AppendLine("<ca>");
+                                    ConfigData.AppendLine(CAData.ToString());
+                                    ConfigData.AppendLine("</ca>");
+                                    ConfigData.AppendLine("<cert>");
+                                    ConfigData.AppendLine(UserCertData.ToString());
+                                    ConfigData.AppendLine("</cert>");
+                                    ConfigData.AppendLine("<key>");
+                                    ConfigData.AppendLine(UserKeyData.ToString());
+                                    ConfigData.AppendLine("</key>");
+
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}Config.ovpn", ConfigData.ToString());
+                                    break;
+                                case 1:
+
+                                    break;
+                                case 2:
+
+                                    break;
+                                case 3:
+
+                                    break;
+                                default:
+                                    WindowsManager.Shared.ShowMessage("Programm Error!", $"Unknown eport type {SelectedIndexExport}", true);
+                                    break;
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            WindowsManager.Shared.ShowMessage("Error export!", err.Message, true);
+                        }
+                    }
                 },(can) => SelectedUser.ID != -1));
             }
         }
