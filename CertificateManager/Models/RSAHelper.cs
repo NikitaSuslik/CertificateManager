@@ -17,9 +17,9 @@ namespace CertificateManager.Models
         {
             var RSAKey = RSA.Create((int)cert.KeySize);
 
-            X509Certificate2 c = new X509Certificate2("C:\\Users\\Nikita\\Desktop\\cert_export_KKAB_CA.crt");
-            string tmp = Convert.ToBase64String(c.Extensions[3].RawData);
-            string tmp2 = Encoding.UTF8.GetString(c.Extensions[3].RawData);
+            //X509Certificate2 c = new X509Certificate2("C:\\Users\\Nikita\\Desktop\\cert_export_KKAB_CA.crt");
+            //string tmp = Convert.ToBase64String(c.Extensions[3].RawData);
+            //string tmp2 = Encoding.UTF8.GetString(c.Extensions[3].RawData);
 
             var certReq = new CertificateRequest(new X500DistinguishedName(_DistingushedNameRawData(cert)), RSAKey, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
@@ -162,7 +162,7 @@ namespace CertificateManager.Models
             byte[] setCommonName = (new byte[] { 0x31, Convert.ToByte(commonName.Length + 9), 0x30, Convert.ToByte(commonName.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, Convert.ToByte(commonName.Length) }).Concat(commonName).ToArray();
             byte[] setOrganisation = (new byte[] { 0x31, Convert.ToByte(organisation.Length + 9), 0x30, Convert.ToByte(organisation.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x0A, 0x0C, Convert.ToByte(organisation.Length) }).Concat(organisation).ToArray();
             byte[] setOrganisationUnit = (new byte[] { 0x31, Convert.ToByte(organisationUnit.Length + 9), 0x30, Convert.ToByte(organisationUnit.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x0B, 0x0C, Convert.ToByte(organisationUnit.Length) }).Concat(organisationUnit).ToArray();
-            byte[] setCountry = (new byte[] { 0x31, Convert.ToByte(country.Length + 9), 0x30, Convert.ToByte(country.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x06, 0x0C, Convert.ToByte(country.Length) }).Concat(country).ToArray();
+            byte[] setCountry = (new byte[] { 0x31, Convert.ToByte(country.Length + 9), 0x30, Convert.ToByte(country.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x06, 0x13, Convert.ToByte(country.Length) }).Concat(country).ToArray();
             byte[] setLocal = (new byte[] { 0x31, Convert.ToByte(local.Length + 9), 0x30, Convert.ToByte(local.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x07, 0x0C, Convert.ToByte(local.Length) }).Concat(local).ToArray();
             byte[] setState = (new byte[] { 0x31, Convert.ToByte(state.Length + 9), 0x30, Convert.ToByte(state.Length + 7), 0x06, 0x03, 0x55, 0x04, 0x08, 0x0C, Convert.ToByte(state.Length) }).Concat(state).ToArray();
 

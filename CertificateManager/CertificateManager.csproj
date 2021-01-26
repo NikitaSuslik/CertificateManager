@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>1700.ico</ApplicationIcon>
+    <Authors>Nikita</Authors>
+    <Product>Certificate Manager</Product>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
