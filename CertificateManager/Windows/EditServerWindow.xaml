@@ -1,0 +1,32 @@
+﻿<Window x:Class="CertificateManager.Windows.EditServerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CertificateManager.Windows"
+        xmlns:model="clr-namespace:CertificateManager.WindowsModels"
+        mc:Ignorable="d"
+        Title="EditServerWindow" Height="auto" Width="250" ResizeMode="NoResize">
+
+    <Window.DataContext>
+        <model:EditServerWindowModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <local:ServerGroupBox Grid.Row="0" DataContext="{Binding ServerModel}"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Cancel" Width="100" Height="20" Command="{Binding CancelButton}"/>
+            <Button Content="Save" Grid.Column="1" Width="100" Height="20" Command="{Binding SaveButton}"/>
+        </Grid>
+    </Grid>
+</Window>

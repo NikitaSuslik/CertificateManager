@@ -1,0 +1,75 @@
+﻿<GroupBox x:Class="CertificateManager.Windows.CertificateGroupBox"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CertificateManager.Windows"
+      xmlns:model="clr-namespace:CertificateManager.WindowsModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="600"
+      Header="Certificate"
+      Background="White">
+    
+    <GroupBox.DataContext>
+            <model:CertificateGroupBoxModel/>
+    </GroupBox.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+            <RowDefinition Height="auto" MaxHeight="60"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Margin="0,2,0,2" Grid.Row="0">
+            <Label Content="Name" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding Name}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="1">
+            <Label Content="Common Name" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding CommonName}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="2">
+            <Label Content="Country" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding Country}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="3">
+            <Label Content="Local" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding Local}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="4">
+            <Label Content="State" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding State}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="5">
+            <Label Content="Organisation" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding Organisation}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="6">
+            <Label Content="Organisation Unit" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding OrganisationUnit}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+
+        <StackPanel Margin="0,2,0,2" Grid.Row="7">
+            <Label Content="Days" Margin="2"/>
+            <TextBox Margin="2" Height="20" Text="{Binding Days}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="8">
+            <Label Content="Key Size" Margin="2"/>
+            <ComboBox Margin="2" Height="20" ItemsSource="{Binding KeySize}" SelectedIndex="{Binding SelectedKeySizeIndex}" IsEnabled="{Binding IsActive}"/>
+        </StackPanel>
+    </Grid>
+</GroupBox>

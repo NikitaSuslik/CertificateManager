@@ -1,36 +1,34 @@
-﻿<Window x:Class="CertificateManager.Windows.CreateUserWindow"
+﻿<Window x:Class="CertificateManager.Windows.EditUserWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CertificateManager.Windows"
         xmlns:model="clr-namespace:CertificateManager.WindowsModels"
-        xmlns:m="clr-namespace:CertificateManager.Models"
         mc:Ignorable="d"
-        Title="User create" Height="auto" Width="530" ResizeMode="NoResize">
+        Title="Edit User" Height="auto" Width="250" ResizeMode="NoResize">
 
     <Window.DataContext>
-        <model:CreateUserWindowModel/>
+        <model:EditUserWindowModel/>
     </Window.DataContext>
-
+    
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-
+        
         <local:UserGroupBox DataContext="{Binding UserModel}"/>
 
-        <local:CertificateGroupBox Grid.Column="1" DataContext="{Binding CertificateModel}"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Button Content="OK" Height="20" Width="100" Command="{Binding OkButton}" Grid.Row="1" Grid.ColumnSpan="2"/>
+            <Button Content="Cancel" Height="20" Width="100" Command="{Binding CancelButton}"/>
+            <Button Content="Save" Grid.Column="1" Height="20" Width="100" Command="{Binding SaveButton}"/>
 
+        </Grid>
     </Grid>
-
-
 </Window>

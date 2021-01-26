@@ -8,25 +8,25 @@ namespace CertificateManager.WindowsModels
 {
     class CertificateGroupBoxModel : MyWindowModel
     {
-        private Cert _parentCert = null;
-        private Cert _ParentCert
+        private Cert _CA = null;
+        private Cert CA
         {
             get
             {
-                return _parentCert;
+                return _CA;
             }
             set
             {
-                _parentCert = value;
-                OnPropertyChanged("CanEdit");
+                _CA = value;
+                OnPropertyChanged("IsActive");
             }
         }
 
-        public bool CanEdit
+        public bool IsActive
         {
             get
             {
-                return _parentCert == null;
+                return CA == null;
             }
         }
 
@@ -38,12 +38,31 @@ namespace CertificateManager.WindowsModels
                 {
                     return null;
                 }
+                long days = 0;
+
+                try
+                {
+                    days = long.Parse(Days);
+                }
+                catch (FormatException)
+                {
+                    throw new Exception($"In \"Days\" can digits only!");
+                }
+                catch (Exception err)
+                {
+                    throw new Exception($"Error parse new certificate: {err.Message}");
+                }
+
                 Cert c = new Cert();
                 c.Name = Name;
                 c.CommonName = CommonName;
                 c.Country = Country;
+                c.State = State;
+                c.Local = Local;
                 c.Organisation = Organisation;
                 c.OrganisationUnit = OrganisationUnit;
+                c.DateStart = DateTime.Now;
+                c.DateStop = DateTime.Now.AddDays(days);
                 c.KeySize = KeySize[SelectedKeySizeIndex];
                 return c;
             }
@@ -58,14 +77,9 @@ namespace CertificateManager.WindowsModels
         public string Name
         {
             get
-            {
-                return _Name;
-            }
+            { return _Name; }
             set
-            {
-                _Name = value;
-                OnPropertyChanged("Name");
-            }
+            { _Name = value; OnPropertyChanged("Name"); CommonName = value; }
         }
 
         private string _CommonName = "";
@@ -82,6 +96,22 @@ namespace CertificateManager.WindowsModels
             set { _Country = value; OnPropertyChanged("Country"); }
         }
 
+        private string _State = "";
+        public string State
+        {
+            get { return _State; }
+            set { _State = value; OnPropertyChanged("State"); }
+        }
+
+        private string  _Local;
+
+        public string  Local
+        {
+            get { return _Local; }
+            set { _Local = value; OnPropertyChanged("Local"); }
+        }
+
+
         private string _Organisation = "";
         public string Organisation
         {
@@ -96,12 +126,19 @@ namespace CertificateManager.WindowsModels
             set { _OrganisationUnit = value; OnPropertyChanged("OrganisationUnit"); }
         }
 
+        private string _Days;
+        public string Days
+        {
+            get { return _Days; }
+            set { _Days = value; OnPropertyChanged("Days"); }
+        }
+
         public List<long> KeySize
         {
             get { return new List<long>() { 256, 512, 1024, 2048, 4096}; }
         }
 
-        private int _SelectedKeySizeIndex = 0;
+        private int _SelectedKeySizeIndex = 3;
         public int SelectedKeySizeIndex
         {
             get { return _SelectedKeySizeIndex; }
@@ -117,10 +154,13 @@ namespace CertificateManager.WindowsModels
         {
             if (props.Length != 0)
             {
-                _ParentCert = ((Server)props[0]).certificate;
-                Country = _ParentCert.Country;
-                Organisation = _ParentCert.Organisation;
-                SelectedKeySizeIndex = KeySize.IndexOf(_ParentCert.KeySize);
+                CA = (Cert)props[0];
+                Country = CA.Country;
+                State = CA.State;
+                Local = CA.Local;
+                Organisation = CA.Organisation;
+                OrganisationUnit = CA.OrganisationUnit;
+                SelectedKeySizeIndex = KeySize.IndexOf(CA.KeySize);
             }
         }
 

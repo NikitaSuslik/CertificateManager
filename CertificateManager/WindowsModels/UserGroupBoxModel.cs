@@ -155,7 +155,7 @@ namespace CertificateManager.WindowsModels
                 User u = new User();
                 u.Login = Login;
                 u.Password = Password;
-                u.Parameters = Params;
+                u.Params = Params;
                 return u;
             }
         }
@@ -170,7 +170,7 @@ namespace CertificateManager.WindowsModels
         {
             if (props.Length != 0)
             {
-                Server = (Server)props[0];
+                Server = (Server)props[1];
                 ServerIP = Server.IP;
                 ServerPort = Server.Port.ToString();
                 Mode = (long)Server.Mode;

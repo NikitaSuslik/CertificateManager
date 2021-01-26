@@ -7,6 +7,9 @@ namespace CertificateManager.WindowsModels
 {
     class CreateServerWindowModel : MyWindowModel
     {
+
+        private Cert _CA = new Cert();
+
         public CertificateGroupBoxModel CertificateModel
         {
             get; set;
@@ -49,7 +52,7 @@ namespace CertificateManager.WindowsModels
                             WindowsManager.Shared.ShowMessage("Info", "Fill all fields in \"Certificate\" group!", false);
                             return;
                         }
-                        SQLManager.Shared.AddServer(ref server);
+                        SQLManager.Shared.AddServer(server, _CA);
                     }
                     catch(Exception err)
                     {
@@ -59,6 +62,11 @@ namespace CertificateManager.WindowsModels
                     WindowsManager.Shared.CloseCurrentWindow();
                 }));
             }
+        }
+        protected override void _PropsChanged()
+        {
+            _CA = (Cert)props[0];
+            CertificateModel.props = props;
         }
     }
 }

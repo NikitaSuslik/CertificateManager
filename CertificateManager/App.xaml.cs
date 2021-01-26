@@ -17,7 +17,7 @@ namespace CertificateManager
     {
         public App()
         {
-            WindowsManager.Shared.ShowWindow(new MainWindow());
+            WindowsManager.Shared.ShowMainWindow();
         }
 
     }

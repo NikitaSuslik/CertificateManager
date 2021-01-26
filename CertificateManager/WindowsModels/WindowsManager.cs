@@ -36,6 +36,18 @@ namespace CertificateManager.WindowsModels
             return MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
+        public void ShowMainWindow()
+        {
+            Window w = new MainWindow();
+            WindowStack.Push(w);
+            (w.DataContext as MainWindowModel).WindowUpdate();
+
+            MyWindowModel context = (w.DataContext as MyWindowModel);
+            w.Closed += _WindowsClosed;
+
+            w.Show();
+        }
+
         public void ShowWindow(Window window, params object[] prop)
         {
             if(WindowStack.Count != 0)
@@ -45,7 +57,6 @@ namespace CertificateManager.WindowsModels
             MyWindowModel context = (window.DataContext as MyWindowModel);
             context.props = prop;
             window.Closed += _WindowsClosed;
-            window.Activated += context._WindowUpdate;
 
             window.Show();
         }
@@ -56,7 +67,9 @@ namespace CertificateManager.WindowsModels
             if (WindowStack.Count == 0)
                 Environment.Exit(0);
             else
+            {
                 WindowStack.Peek().Show();
+            }
         }
 
         public void CloseCurrentWindow()
@@ -64,7 +77,12 @@ namespace CertificateManager.WindowsModels
             Window win = WindowStack.Pop();
             win.Closed -= _WindowsClosed;
             win.Close();
-            WindowStack.Peek().Show();
+            Window w = WindowStack.Peek();
+            if (w is MainWindow)
+            {
+                (w.DataContext as MainWindowModel).WindowUpdate();
+                w.Show();
+            }
         }
 
     }
@@ -92,11 +110,6 @@ namespace CertificateManager.WindowsModels
         virtual protected void _PropsChanged()
         {
             
-        }
-
-        virtual public void _WindowUpdate(object sender, EventArgs e)
-        {
-
         }
 
         protected void OnPropertyChanged(string prop)

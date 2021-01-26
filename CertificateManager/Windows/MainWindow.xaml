@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:CertificateManager.Windows"
         xmlns:model="clr-namespace:CertificateManager.WindowsModels"
         mc:Ignorable="d"
-        Title="Main Window" Height="450" Width="800">
-    
+        Title="Main Window" Height="714" Width="901">
+
     <Window.DataContext>
         <model:MainWindowModel/>
     </Window.DataContext>
-    
+
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -23,16 +23,18 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
+
         <StackPanel Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="90*"/>
                 </Grid.ColumnDefinitions>
-                <Label Content="Servers" VerticalAlignment="Center"/>
-                <ComboBox Height="25" Margin="10" SelectedValue="{Binding SelectedServer}" ItemsSource="{Binding Servers}" Grid.Column="1">
+                <Label Content="CA" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1" Margin="10" ItemsSource="{Binding CAs}" SelectedItem="{Binding SelectedCA}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
@@ -40,107 +42,205 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </Grid>
-
-            <GroupBox Header="Server info">
-                <StackPanel Margin="5">
-                    <Grid Margin="1">
+            <GroupBox Header="CA Info">
+                <StackPanel>
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding StringFormat=IP: {0}, Path=SelectedServer.IP}"/>
-                        <TextBlock Text="{Binding StringFormat=Port: {0}, Path=SelectedServer.Port}" Grid.Column="1"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Common Name:" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCA.Name}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <TextBlock Text="Country:" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCA.Country}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Grid>
-                    <Grid Margin="1">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding StringFormat=Proto: {0}, Path=SelectedServer.SProto}"/>
-                        <TextBlock Text="{Binding StringFormat=Mode: {0}, Path=SelectedServer.SMode}" Grid.Column="1"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Organisation:" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCA.Organisation}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <TextBlock Text="Organisation Unit:" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCA.OrganisationUnit}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Grid>
-                </StackPanel>
-            </GroupBox>
-            
-            <GroupBox Header="Certificate Info">
-                <StackPanel Margin="5">
-                    <Grid Margin="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedServer.certificate.Name}" Grid.Column="0"/>
-                        <TextBlock Text="{Binding StringFormat=Common\ Name: {0}, Path=SelectedServer.certificate.CommonName}" Grid.Column="1"/>
-                    </Grid>
-                    <Grid Margin="1">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding StringFormat=Country: {0}, Path=SelectedServer.certificate.Country}" Grid.Column="0"/>
-                        <TextBlock Text="{Binding StringFormat=Key\ Size: {0}, Path=SelectedServer.certificate.KeySize}" Grid.Column="1"/>
-                    </Grid>
-                    <Grid Margin="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding StringFormat=Organisation: {0}, Path=SelectedServer.certificate.Organisation}" Grid.Column="0"/>
-                        <TextBlock Text="{Binding StringFormat=Organisation\ Unit: {0}, Path=SelectedServer.certificate.OrganisationUnit}" Grid.Column="1"/>
+                        <TextBlock Text="{Binding Path=SelectedCA.SDateStart, StringFormat=Start\ date: {0}}"/>
+                        <TextBlock Text="{Binding Path=SelectedCA.SDateStop, StringFormat=Stop\ date: {0}}" Grid.Column="1"/>
                     </Grid>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
 
-
-        <GroupBox Header="Servers Tools" Grid.Row="0" Grid.Column="2">
+        <GroupBox Header="CA Tools" Grid.Row="0" Grid.Column="2">
             <StackPanel Grid.Row="0" VerticalAlignment="Center">
-                <Button Content="Create Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateServer}"/>
-                <Button Content="Delete Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteServer}"/>
-            </StackPanel>
-        </GroupBox>
-        
-        <GroupBox Header="Users Tools" Grid.Row="1" Grid.Column="2">
-            <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                <Button Content="Create User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateUser}"/>
-                <Button Content="Delete User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteUser}"/>
+                <Button Content="Create CA" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateCA}"/>
+                <Button Content="Delete CA" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteCA}"/>
+                <Button Content="Export Certificate" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CAExport}"/>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="Users" Grid.Row="1" Grid.RowSpan="2">
-            <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" HorizontalContentAlignment="Stretch">
+        <GroupBox Header="Servers" Grid.Row="1" Grid.RowSpan="2">
+            <ListBox ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Login}"/>
+                        <TextBlock Text="{Binding Name}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </GroupBox>
 
-        <GroupBox Header="User Info" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
-            <StackPanel>
-                <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedUser.Login}" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Password: {0}, Path=SelectedUser.Password}" Margin="5"/>
-                <TextBlock Text="Certificate" HorizontalAlignment="Center" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Name: {0}, Path=SelectedUser.certificate.Name}" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Common\ Name: {0}, Path=SelectedUser.certificate.CommonName}" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Country: {0}, Path=SelectedUser.certificate.Country}" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Organisation: {0}, Path=SelectedUser.certificate.Organisation}" Margin="5"/>
-                <TextBlock Text="{Binding StringFormat=Organisation\ Unit: {0}, Path=SelectedUser.certificate.OrganisationUnit}" Margin="5"/>
-                <TextBlock Text="Params:" Margin="5"/>
-                <TextBlock Text="{Binding SelectedUser.Parameters}" Margin="5" Height="auto"/>
+        <GroupBox Header="Server Info" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+            <StackPanel Margin="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="IP:" VerticalAlignment="Center" Margin="2"/>
+                        <TextBox Text="{Binding SelectedServer.IP}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                        <TextBlock Text="Port:" VerticalAlignment="Center" Margin="2"/>
+                        <TextBox Text="{Binding SelectedServer.Port}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding StringFormat=Proto: {0}, Path=SelectedServer.SProto}" Margin="2"/>
+                    <TextBlock Text="{Binding StringFormat=Mode: {0}, Path=SelectedServer.SMode}" Grid.Column="1" Margin="2"/>
+                </Grid>
+                <TextBlock Text="{Binding StringFormat=Cipher: {0}, Path=SelectedServer.SCipher}" Margin="2"/>
+
+                <Border BorderThickness=".2" BorderBrush="Gray" Margin="0,5,0,5"/>
+                <TextBlock Text="Certificate" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Name:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedServer.certificate.Name}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Common Name:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedServer.certificate.CommonName}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Country:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedServer.certificate.Country}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Organisation:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedServer.certificate.Organisation}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Organisation Unit:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedServer.certificate.OrganisationUnit}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding StringFormat=Start\ date: {0}, Path=SelectedServer.certificate.SDateStart}" Margin="2"/>
+                <TextBlock Text="{Binding StringFormat=Stop\ date: {0}, Path=SelectedServer.certificate.SDateStop}" Margin="2"/>
+                <TextBlock Text="Params:" Margin="2"/>
+                <TextBlock Text="{Binding SelectedServer.Params}" Margin="2" Height="auto"/>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="Export Tools" Grid.Row="2" Grid.Column="2">
+        <GroupBox Header="Servers Tools" Grid.Row="1" Grid.Column="2">
+            <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                <Button Content="Create Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateServer}"/>
+                <Button Content="Edit Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding EditServer}"/>
+                <Button Content="Delete Server" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteServer}"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Server Export" Grid.Row="2" Grid.Column="2">
+            <StackPanel VerticalAlignment="Center">
+                <ComboBox Margin="5" SelectedIndex="{Binding ServerExportIndex}">
+                    <ComboBoxItem Content="Only certificates"/>
+                    <ComboBoxItem Content="Certificates in config"/>
+                    <ComboBoxItem Content="Certificates out config"/>
+                </ComboBox>
+                <Button Content="Export" Margin="5" Command="{Binding ServerExport}"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Users Tools" Grid.Row="3" Grid.Column="2">
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <Button Content="Create User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding CreateUser}"/>
+                <Button Content="Edit User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding EditUser}"/>
+                <Button Content="Delete User" Grid.Column="1" Height="20" Width="110" Margin="5" Command="{Binding DeleteUser}"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Users" Grid.Row="3" Grid.RowSpan="2">
+            <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Login}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <GroupBox Header="User Info" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2">
             <StackPanel>
-                <ComboBox Margin="5" SelectedIndex="0">
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Name:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.Login}" Margin="2" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Password:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.Password}" Margin="2" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Border BorderThickness=".2" BorderBrush="Gray" Margin="0,5,0,5"/>
+                <TextBlock Text="Certificate" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Name:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.certificate.Name}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Common Name:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.certificate.CommonName}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Country:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.certificate.Country}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Organisation:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.certificate.Organisation}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="Organisation Unit:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedUser.certificate.OrganisationUnit}" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding StringFormat=Start\ date: {0}, Path=SelectedUser.certificate.SDateStart}" Margin="2"/>
+                <TextBlock Text="{Binding StringFormat=Stop\ date: {0}, Path=SelectedUser.certificate.SDateStop}" Margin="2"/>
+                <TextBlock Text="Params:" Margin="2"/>
+                <TextBlock Text="{Binding SelectedUser.Params}" Margin="2" Height="auto"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="User Export" Grid.Row="4" Grid.Column="2">
+            <StackPanel VerticalAlignment="Center">
+                <ComboBox Margin="5" SelectedIndex="{Binding UserExportIndex}">
                     <ComboBoxItem Content="Certificates in config"/>
                     <ComboBoxItem Content="Certificates out config"/>
                     <ComboBoxItem Content="Only certificates"/>
-                    <ComboBoxItem Content="Only config"/>
                 </ComboBox>
-                <Button Content="Export" Margin="5" Command="{Binding ExportButton}"/>
+                <Button Content="Export" Margin="5" Command="{Binding UserExport}"/>
             </StackPanel>
         </GroupBox>
     </Grid>

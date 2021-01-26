@@ -11,17 +11,61 @@ namespace CertificateManager.WindowsModels
 {
     class MainWindowModel : MyWindowModel
     {
-        private long _SelectedIndexExport = 0;
-        public long SelectedIndexExport
+        private long _UserExportIndex = 0;
+        public long UserExportIndex
         {
             get
             {
-                return _SelectedIndexExport;
+                return _UserExportIndex;
             }
             set
             {
-                _SelectedIndexExport = value;
-                OnPropertyChanged("SelectedIndexExport");
+                _UserExportIndex = value;
+                OnPropertyChanged("UserExportIndex");
+            }
+        }
+
+        private long _ServerExportIndex = 0;
+        public long ServerExportIndex
+        {
+            get
+            {
+                return _ServerExportIndex;
+            }
+            set
+            {
+                _ServerExportIndex = value;
+                OnPropertyChanged("ServerExportIndex");
+            }
+        }
+
+
+        private List<Cert> _CAs = new List<Cert>();
+        public List<Cert> CAs
+        {
+            get
+            {
+                return _CAs;
+            }
+            set
+            {
+                _CAs = value;
+                OnPropertyChanged("CAs");
+            }
+        }
+
+        private Cert _SelectedCA = new Cert();
+        public Cert SelectedCA
+        {
+            get
+            {
+                return _SelectedCA;
+            }
+            set
+            {
+                _SelectedCA = value;
+                OnPropertyChanged("SelectedCA");
+                _UpdateServers();
             }
         }
 
@@ -70,6 +114,17 @@ namespace CertificateManager.WindowsModels
             set { _SelectedUser = value; OnPropertyChanged("SelectedUser"); }
         }
 
+        private CommandRelise _CreateCA;
+        public CommandRelise CreateCA
+        {
+            get
+            {
+                return _CreateCA ?? (_CreateCA = new CommandRelise(obj =>
+                {
+                    WindowsManager.Shared.ShowWindow(new CreateCAWindow());
+                }));
+            }
+        }
 
         private CommandRelise _CreateServer;
         public CommandRelise CreateServer
@@ -78,8 +133,8 @@ namespace CertificateManager.WindowsModels
             {
                 return _CreateServer ?? (_CreateServer = new CommandRelise(obj =>
                 {
-                    WindowsManager.Shared.ShowWindow(new CreateServerWindow());
-                }));
+                    WindowsManager.Shared.ShowWindow(new CreateServerWindow(), SelectedCA);
+                }, (can) => SelectedCA.ID != -1));
             }
         }
 
@@ -90,8 +145,31 @@ namespace CertificateManager.WindowsModels
             {
                 return _CreateUser ?? (_CreateUser = new CommandRelise(obj =>
                 {
-                    WindowsManager.Shared.ShowWindow(new CreateUserWindow(), SelectedServer);
-                },(can) => SelectedServer.ID != -1));
+                    WindowsManager.Shared.ShowWindow(new CreateUserWindow(), SelectedCA, SelectedServer);
+                }, (can) => SelectedServer.ID != -1));
+            }
+        }
+
+        private CommandRelise _DeleteCA;
+        public CommandRelise DeleteCA
+        {
+            get
+            {
+                return _DeleteCA ?? (_DeleteCA = new CommandRelise(obj =>
+                {
+                    if (WindowsManager.Shared.ShowQuestion("Warning!", $"Are you sure want delete this CA \"{SelectedCA.Name}\"?\nAllServers and users will delete too!"))
+                    {
+                        try
+                        {
+                            SQLManager.Shared.DeleteCA(SelectedCA);
+                            WindowUpdate();
+                        }
+                        catch (Exception err)
+                        {
+                            WindowsManager.Shared.ShowMessage("Delete CA error!", err.Message, true);
+                        }
+                    }
+                }, (can) => SelectedCA.ID != -1));
             }
         }
 
@@ -107,19 +185,18 @@ namespace CertificateManager.WindowsModels
                         if (WindowsManager.Shared.ShowQuestion("Warning!", $"Are you sure want delete this server \"{SelectedServer.Name}\"?\nAll users and certificates this server will delete too!"))
                         {
                             SQLManager.Shared.DeleteServer(SelectedServer);
-                            _WindowUpdate(this, new EventArgs());
+                            WindowUpdate();
                         }
                     }
                     catch (Exception err)
                     {
                         WindowsManager.Shared.ShowMessage("Delete server error!", err.Message, true);
                     }
-                },(can) => SelectedServer.ID != -1));
+                }, (can) => SelectedServer.ID != -1));
             }
         }
 
         private CommandRelise _DeleteUser;
-
         public CommandRelise DeleteUser
         {
             get
@@ -131,7 +208,7 @@ namespace CertificateManager.WindowsModels
                         if (WindowsManager.Shared.ShowQuestion("Warning!", $"Are you sure want delete this user \"{SelectedUser.Login}\"?\nAll certificate this user will delete too!"))
                         {
                             SQLManager.Shared.DeleteUser(SelectedUser);
-                            _WindowUpdate(this, new EventArgs());
+                            WindowUpdate();
                         }
                     }
                     catch (Exception err)
@@ -142,12 +219,115 @@ namespace CertificateManager.WindowsModels
             }
         }
 
-        private CommandRelise _ExportButton;
-        public CommandRelise ExportButton
+        private CommandRelise _EditServer;
+        public CommandRelise EditServer
         {
             get
             {
-                return _ExportButton ?? (_ExportButton = new CommandRelise(obj =>
+                return _EditServer ?? (_EditServer = new CommandRelise(obj =>
+                {
+                    WindowsManager.Shared.ShowWindow(new EditServerWindow(), SelectedServer);
+                }, (can) => SelectedServer.ID != -1));
+            }
+        }
+
+        private CommandRelise _EditUser;
+        public CommandRelise EditUser
+        {
+            get
+            {
+                return _EditUser ?? (_EditUser = new CommandRelise(obj =>
+                {
+                    WindowsManager.Shared.ShowWindow(new EditUserWindow(), SelectedUser, SelectedServer);
+                }, (can) => SelectedUser.ID != -1));
+            }
+        }
+
+        private CommandRelise _CAExport;
+        public CommandRelise CAExport
+        {
+            get
+            {
+                return _CAExport ?? (_CAExport = new CommandRelise(obj =>
+                {
+                    VistaFolderBrowserDialog folderBrowserDialog = new VistaFolderBrowserDialog();
+                    folderBrowserDialog.UseDescriptionForTitle = true;
+                    folderBrowserDialog.Description = "Select export folder";
+                    folderBrowserDialog.RootFolder = Environment.SpecialFolder.DesktopDirectory;
+                    folderBrowserDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\";
+                    if (folderBrowserDialog.ShowDialog().GetValueOrDefault())
+                    {
+                        string ExportFolderPath = folderBrowserDialog.SelectedPath;
+
+                        try
+                        {
+                            File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                        }
+                        catch (Exception err)
+                        {
+                            WindowsManager.Shared.ShowMessage("Error export!", err.Message, true);
+                        }
+                    }
+                },(can) => SelectedCA.ID != -1));
+            }
+        }
+
+        private CommandRelise _ServerExport;
+        public CommandRelise ServerExport
+        {
+            get
+            {
+                return _ServerExport ?? (_ServerExport = new CommandRelise(obj =>
+                {
+                    VistaFolderBrowserDialog folderBrowserDialog = new VistaFolderBrowserDialog();
+                    folderBrowserDialog.UseDescriptionForTitle = true;
+                    folderBrowserDialog.Description = "Select export folder";
+                    folderBrowserDialog.RootFolder = Environment.SpecialFolder.DesktopDirectory;
+                    folderBrowserDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\";
+                    if (folderBrowserDialog.ShowDialog().GetValueOrDefault())
+                    {
+                        string ExportFolderPath = folderBrowserDialog.SelectedPath;
+
+                        try
+                        {
+                            switch (ServerExportIndex)
+                            {
+                                case 0:
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.crt", SelectedServer.certificate.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.key", SelectedServer.certificate.KeyToFile());
+                                    break;
+                                case 1:
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.conf", SelectedServer.GetConfig(SelectedCA));
+                                    break;
+                                case 2:
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.conf", SelectedServer.GetConfig(SelectedCA, false));
+
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.crt", SelectedServer.certificate.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedServer.Name}.key", SelectedServer.certificate.KeyToFile());
+                                    break;
+                                default:
+                                    WindowsManager.Shared.ShowMessage("Programm Error!", $"Unknown eport type {UserExportIndex}", true);
+                                    break;
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            WindowsManager.Shared.ShowMessage("Error export!", err.Message, true);
+                        }
+                    }
+
+                }, (can) => SelectedServer.ID != -1));
+            }
+        }
+
+        private CommandRelise _UserExport;
+        public CommandRelise UserExport
+        {
+            get
+            {
+                return _UserExport ?? (_UserExport = new CommandRelise(obj =>
                 {
                     VistaFolderBrowserDialog folderBrowserDialog = new VistaFolderBrowserDialog();
                     folderBrowserDialog.UseDescriptionForTitle = true;
@@ -158,60 +338,31 @@ namespace CertificateManager.WindowsModels
                     if (folderBrowserDialog.ShowDialog().GetValueOrDefault())
                     {
                         string ExportFolderPath = folderBrowserDialog.SelectedPath;
-                        StringBuilder ConfigData = new StringBuilder();
-                        StringBuilder CAData = new StringBuilder();
-                        StringBuilder UserCertData = new StringBuilder();
-                        StringBuilder UserKeyData = new StringBuilder();
+                        
 
                         try
                         {
-                            switch (SelectedIndexExport)
+                            switch (UserExportIndex)
                             {
                                 case 0:
-                                    string[] CA = SQLManager.Shared.GetCA(SelectedServer.certificate);
-                                    string[] UserCert = SQLManager.Shared.GetUserCert(SelectedUser.certificate);
 
-                                    CAData.AppendLine("-----BEGIN CERTIFICATE-----");
-                                    CAData.AppendLine(CA[0]);
-                                    CAData.AppendLine("-----END CERTIFICATE-----");
-
-                                    UserCertData.AppendLine("-----BEGIN CERTIFICATE-----");
-                                    UserCertData.AppendLine(UserCert[0]);
-                                    UserCertData.AppendLine("-----END CERTIFICATE-----");
-
-                                    UserKeyData.AppendLine("-----BEGIN PRIVATE KEY-----");
-                                    UserKeyData.AppendLine(UserCert[1]);
-                                    UserKeyData.AppendLine("-----END PRIVATE KEY-----");
-
-                                    ConfigData.AppendLine("client");
-                                    ConfigData.AppendLine($"dev {SelectedServer.SMode}");
-                                    ConfigData.AppendLine($"proto {SelectedServer.SProto}");
-                                    ConfigData.AppendLine($"remote {SelectedServer.IP} {SelectedServer.Port}");
-                                    ConfigData.AppendLine("resolv-retry infinite");
-                                    ConfigData.AppendLine("remote-cert-tls server");
-                                    ConfigData.AppendLine("<ca>");
-                                    ConfigData.AppendLine(CAData.ToString());
-                                    ConfigData.AppendLine("</ca>");
-                                    ConfigData.AppendLine("<cert>");
-                                    ConfigData.AppendLine(UserCertData.ToString());
-                                    ConfigData.AppendLine("</cert>");
-                                    ConfigData.AppendLine("<key>");
-                                    ConfigData.AppendLine(UserKeyData.ToString());
-                                    ConfigData.AppendLine("</key>");
-
-                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}Config.ovpn", ConfigData.ToString());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.ovpn", SelectedUser.GetConfigForServer(SelectedServer, SelectedCA));
                                     break;
                                 case 1:
 
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.ovpn", SelectedUser.GetConfigForServer(SelectedServer, SelectedCA, false));
+
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.crt", SelectedUser.certificate.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.key", SelectedUser.certificate.KeyToFile());
                                     break;
                                 case 2:
-
-                                    break;
-                                case 3:
-
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.crt", SelectedUser.certificate.CertToFile());
+                                    File.WriteAllText(ExportFolderPath + $"\\{SelectedUser.Login}.key", SelectedUser.certificate.KeyToFile());
                                     break;
                                 default:
-                                    WindowsManager.Shared.ShowMessage("Programm Error!", $"Unknown eport type {SelectedIndexExport}", true);
+                                    WindowsManager.Shared.ShowMessage("Programm Error!", $"Unknown eport type {UserExportIndex}", true);
                                     break;
                             }
                         }
@@ -220,18 +371,22 @@ namespace CertificateManager.WindowsModels
                             WindowsManager.Shared.ShowMessage("Error export!", err.Message, true);
                         }
                     }
-                },(can) => SelectedUser.ID != -1));
+                }, (can) => SelectedUser.ID != -1));
             }
         }
 
-
-        public MainWindowModel()
+        public  void WindowUpdate()
         {
+            CAs = SQLManager.Shared.GetCAs();
+            SelectedCA = CAs.Count != 0 ? CAs[0] : new Cert();
         }
 
-        public override void _WindowUpdate(object sender, EventArgs e)
+        private void _UpdateServers()
         {
-            Servers = SQLManager.Shared.GetServers();
+            if (SelectedCA != null && SelectedCA.ID != -1)
+                Servers = SQLManager.Shared.GetServersForCa(SelectedCA);
+            else
+                Servers = new List<Server>();
             SelectedServer = Servers.Count != 0 ? Servers[0] : new Server();
         }
 

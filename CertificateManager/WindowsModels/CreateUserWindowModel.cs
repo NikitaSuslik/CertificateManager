@@ -7,6 +7,9 @@ namespace CertificateManager.WindowsModels
 {
     class CreateUserWindowModel : MyWindowModel
     {
+        private Cert _CA = null;
+        private Server _Server = null;
+
         public CertificateGroupBoxModel CertificateModel
         {
             get; set;
@@ -49,7 +52,7 @@ namespace CertificateManager.WindowsModels
                             WindowsManager.Shared.ShowMessage("Info", "Fill all fields in \"Certificate\" group!", false);
                             return;
                         }
-                        SQLManager.Shared.AddUser(ref user, UserModel.Server);
+                        SQLManager.Shared.AddUser(user, _Server, _CA);
                     }
                     catch(Exception err)
                     {
@@ -65,6 +68,8 @@ namespace CertificateManager.WindowsModels
 
         protected override void _PropsChanged()
         {
+            _CA = (Cert)props[0];
+            _Server = (Server)props[1];
             CertificateModel.props = props;
             UserModel.props = props;
         }

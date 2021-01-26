@@ -95,6 +95,20 @@ namespace CertificateManager.WindowsModels
             }
         }
 
+        private long _CipherIndex = 0;
+        public long CipherIndex
+        {
+            get
+            {
+                return _CipherIndex;
+            }
+            set
+            {
+                _CipherIndex = value;
+                OnPropertyChanged("CipherIndex");
+            }
+        }
+
         public Server NewServer
         {
             get
@@ -115,8 +129,9 @@ namespace CertificateManager.WindowsModels
                 s.IP = IP;
                 s.Port = port;
                 s.Params = Params;
-                s.Proto = (Server.Protocol)Proto;
-                s.Mode = (Server.LayerMode)Mode;
+                s.Proto = (Server.ProtocolName)Proto;
+                s.Mode = (Server.ModeName)Mode;
+                s.Cipher = (Server.CipherName)CipherIndex;
                 return s;
             }
         }
