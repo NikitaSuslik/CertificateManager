@@ -137,10 +137,16 @@ namespace CertificateManager.WindowsModels
         {
             int length = 6;
             char[] cpass = new char[length];
-
+            List<int> sym = new List<int> { 34, 39, 40, 41, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 91, 92, 93, 94, 95, 96};
+            Random r = new Random();
             for (int i = 0; i < length; i++)
             {
-                cpass[i] = (char) new Random().Next(33, 122);
+                int c = r.Next(33, 122);
+                while (sym.Contains(c))
+                {
+                    c = r.Next(33, 122);
+                }
+                cpass[i] = (char)c;
             }
 
             return new string(cpass);
@@ -150,8 +156,6 @@ namespace CertificateManager.WindowsModels
         {
             get
             {
-                if (!_AllField())
-                    return null;
                 User u = new User();
                 u.Login = Login;
                 u.Password = Password;
@@ -159,12 +163,6 @@ namespace CertificateManager.WindowsModels
                 return u;
             }
         }
-
-        private bool _AllField()
-        {
-            return Login != "";
-        }
-
 
         protected override void _PropsChanged()
         {

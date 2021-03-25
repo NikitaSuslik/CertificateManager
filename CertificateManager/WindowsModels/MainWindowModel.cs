@@ -262,6 +262,7 @@ namespace CertificateManager.WindowsModels
                         try
                         {
                             File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.crt", SelectedCA.CertToFile());
+                            File.WriteAllText(ExportFolderPath + $"\\{SelectedCA.Name}_CA.key", SelectedCA.KeyToFile());
                         }
                         catch (Exception err)
                         {

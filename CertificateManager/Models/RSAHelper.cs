@@ -80,6 +80,11 @@ namespace CertificateManager.Models
             return new string[] { certBase64, keyBase64 };
         }
 
+        static public void RevokeCert(Cert cert, Cert ca)
+        {
+
+        }
+
         static public void FillInfo(ref Cert cert, string[] cert64)
         {
             var Xcert = new X509Certificate2(Convert.FromBase64String(cert64[0]));

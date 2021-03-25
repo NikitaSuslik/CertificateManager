@@ -14,10 +14,18 @@ namespace CertificateManager.Models
         {
             get; set;
         } = -1;
+        private string login = "";
         public string Login
         {
-            get; set;
-        } = "";
+            get
+            {
+                return login == "" ? certificate.Name : login;
+            }
+            set
+            {
+                login = value;
+            }
+        }
         public string Password
         {
             get; set;
@@ -38,12 +46,15 @@ namespace CertificateManager.Models
             builder.AppendLine("remote-cert-tls server");
             builder.AppendLine("auth SHA1");
             builder.AppendLine($"cipher {serv.SCipher}");
-            builder.AppendLine("auth-user-pass");
+            if(Login != "")
+                builder.AppendLine("auth-user-pass");
             builder.AppendLine("resolv-retry infinite");
             builder.AppendLine("persist-key");
             builder.AppendLine("persist-tun");
 
-            if(certInConfig)
+            builder.AppendLine(Params);
+
+            if (certInConfig)
             {
                 builder.AppendLine("<ca>");
                 builder.AppendLine(CA.CertToFile());
@@ -61,8 +72,6 @@ namespace CertificateManager.Models
                 builder.AppendLine($"cert {Login}.crt");
                 builder.AppendLine($"key {Login}.key");
             }
-
-            builder.AppendLine(Params);
 
             return builder.ToString();
         }

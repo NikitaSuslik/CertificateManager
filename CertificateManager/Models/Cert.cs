@@ -76,9 +76,14 @@ namespace CertificateManager.Models
             string[] cert64 = RSAHelper.GetCert64(this);
 
             StringBuilder builder = new StringBuilder();
+            StringBuilder cert = new StringBuilder(cert64[0]);
+            for (int i = 70; i < cert.Length; i += 71)
+            {
+                cert.Insert(i, '\n');
+            }
 
             builder.AppendLine("-----BEGIN CERTIFICATE-----");
-            builder.AppendLine(cert64[0]);
+            builder.AppendLine(cert.ToString());
             builder.AppendLine("-----END CERTIFICATE-----");
 
             return builder.ToString();
@@ -89,9 +94,14 @@ namespace CertificateManager.Models
             string[] cert64 = RSAHelper.GetCert64(this);
 
             StringBuilder builder = new StringBuilder();
+            StringBuilder key = new StringBuilder(cert64[1]);
+            for (int i = 70; i < key.Length; i += 71)
+            {
+                key.Insert(i, '\n');
+            }
 
             builder.AppendLine($"-----BEGIN {cert64[2]} PRIVATE KEY-----");
-            builder.AppendLine(cert64[1]);
+            builder.AppendLine(key.ToString());
             builder.AppendLine($"-----END {cert64[2]} PRIVATE KEY-----");
 
             return builder.ToString();
