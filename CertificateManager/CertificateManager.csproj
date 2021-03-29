@@ -9,6 +9,7 @@
     <Authors>Nikita</Authors>
     <Product>Certificate Manager</Product>
     <SignAssembly>true</SignAssembly>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

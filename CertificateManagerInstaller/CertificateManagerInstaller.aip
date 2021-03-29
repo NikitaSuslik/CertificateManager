@@ -11,10 +11,10 @@
     <ROW Property="ARPNOREPAIR" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPPRODUCTICON" Value="_.exe" Type="8"/>
     <ROW Property="Manufacturer" Value="Nikita"/>
-    <ROW Property="ProductCode" Value="1033:{50AD69EF-9017-411E-9C1F-4C71E95467E3} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{770D060C-B605-4DE2-A981-74364B303343} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Certificate Manager"/>
-    <ROW Property="ProductVersion" Value="1.0.1" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.0.2" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{BDA808A7-4253-4624-B257-0721F62D4B88}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
