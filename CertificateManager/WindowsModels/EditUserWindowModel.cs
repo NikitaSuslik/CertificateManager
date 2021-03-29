@@ -7,6 +7,7 @@ namespace CertificateManager.WindowsModels
 {
     class EditUserWindowModel : MyWindowModel
     {
+        private User u;
         public UserGroupBoxModel UserModel
         {
             get; set;
@@ -31,7 +32,17 @@ namespace CertificateManager.WindowsModels
             {
                 return _SaveButton ?? (_SaveButton = new CommandRelise(obj =>
                 {
-
+                    try
+                    {
+                        User nu = UserModel.NewUser;
+                        nu.ID = u.ID;
+                        SQLManager.Shared.EditUser(nu);
+                        WindowsManager.Shared.CloseCurrentWindow();
+                    }
+                    catch(Exception err)
+                    {
+                        WindowsManager.Shared.ShowMessage("Error!", err.Message, true);
+                    }
                 }));
             }
         }
@@ -40,6 +51,7 @@ namespace CertificateManager.WindowsModels
         {
             User user = props[0] as User;
 
+            u = user;
             UserModel.Login = user.Login;
             UserModel.Params = user.Params;
             UserModel.Password = user.Password;

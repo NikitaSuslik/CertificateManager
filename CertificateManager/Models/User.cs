@@ -19,7 +19,7 @@ namespace CertificateManager.Models
         {
             get
             {
-                return login == "" ? certificate.Name : login;
+                return login == "" && certificate.Name != null ? certificate.Name : login;
             }
             set
             {
@@ -35,6 +35,7 @@ namespace CertificateManager.Models
             get; set;
         }
 
+
         public string GetConfigForServer(Server serv, Cert CA, bool certInConfig = true)
         {
             StringBuilder builder = new StringBuilder();
@@ -46,7 +47,7 @@ namespace CertificateManager.Models
             builder.AppendLine("remote-cert-tls server");
             builder.AppendLine("auth SHA1");
             builder.AppendLine($"cipher {serv.SCipher}");
-            if(Login != "")
+            if(login != "")
                 builder.AppendLine("auth-user-pass");
             builder.AppendLine("resolv-retry infinite");
             builder.AppendLine("persist-key");

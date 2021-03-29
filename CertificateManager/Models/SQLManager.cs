@@ -107,7 +107,7 @@ namespace CertificateManager.Models
                 command.CommandText = "CREATE TABLE IF NOT EXISTS Users (" +
                         "id INTEGER PRIMARY KEY NOT NULL UNIQUE ON CONFLICT ABORT, " +
                         "server INTEGER NOT NULL REFERENCES Servers (id) ON DELETE CASCADE, " +
-                        "login STRING NOT NULL UNIQUE ON CONFLICT ABORT," +
+                        "login STRING NOT NULL," +
                         "password STRING NOT NULL," +
                         "params STRING NOT NULL" +
                         ")";
@@ -437,6 +437,61 @@ namespace CertificateManager.Models
             }
 
             return users;
+        }
+
+        public void EditUser(User user)
+        {
+            SQLiteCommand command = dataBase.CreateCommand();
+            command.Connection = dataBase;
+
+            command.CommandText = "UPDATE Users SET login=@login, password=@password, params=@params WHERE id = @id";
+            command.Parameters.AddWithValue("@login", user.Login);
+            command.Parameters.AddWithValue("@password", user.Password);
+            command.Parameters.AddWithValue("@params", user.Params);
+            command.Parameters.AddWithValue("@id", user.ID);
+
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception err)
+            {
+                throw new Exception(err.Message);
+            }
+        }
+
+        public void EditServer(Server server)
+        {
+            SQLiteCommand command = dataBase.CreateCommand();
+            command.Connection = dataBase;
+
+            command.CommandText = "UPDATE Servers SET name=@name, " +
+                                                    "ip=@ip, " +
+                                                    "port=@port, " +
+                                                    "mode=@mode, " +
+                                                    "proto=@proto, " +
+                                                    "cipher=@cipher, " +
+                                                    "auth=@auth, " +
+                                                    "params=@params " +
+                                                    "WHERE id = @id";
+            command.Parameters.AddWithValue("@name", server.Name);
+            command.Parameters.AddWithValue("@ip", server.IP);
+            command.Parameters.AddWithValue("@port", server.Port);
+            command.Parameters.AddWithValue("@mode", server.Mode);
+            command.Parameters.AddWithValue("@proto", server.Proto);
+            command.Parameters.AddWithValue("@cipher", server.Cipher);
+            command.Parameters.AddWithValue("@auth", server.Auth);
+            command.Parameters.AddWithValue("@params", server.Params);
+            command.Parameters.AddWithValue("@id", server.ID);
+
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception err)
+            {
+                throw new Exception(err.Message);
+            }
         }
     }
 }
